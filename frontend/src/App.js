@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "./components/apiConfig";
 import { useTheme, createTheme, ThemeProvider } from "@mui/material/styles";
+import InputSlider from "./components/InputSlider";
 
 import {
   Radio,
@@ -14,6 +15,10 @@ import {
   CardContent,
   Container,
   CssBaseline,
+  Box,
+  Typography,
+  TextField,
+  Input,
 } from "@mui/material";
 import "./App.css";
 
@@ -28,15 +33,19 @@ function App() {
   const [fitnessFunctions, setFitnessFunctions] = useState([]);
   const [selectedAlgorithm, setSelectedAlgorithm] = useState(null);
   const [selectedFitnessFunction, setSelectedFitnessFunction] = useState([]);
+  const [parameters, setParameters] = useState([]);
+  const [parametersValues, setParametersValues] = useState({});
   const theme = useTheme();
 
   const fetchAlgorithms = async () => {
     api
-      .get("http://localhost:3001/api/get")
+      .get("Algorithms")
       .then((response) => {
+        console.log(response.data);
         setAlgorithms(response.data);
       })
       .catch((error) => {
+        console.log(error);
         setAlgorithms([
           { name: "a1", id: 0 },
           { name: "a2", id: 1 },
@@ -59,6 +68,38 @@ function App() {
       });
   };
 
+  const initializeParametersValues = (parameters) => {
+    const parametersValues = {};
+    parameters.forEach((parameter) => {
+      parametersValues[parameter.id] = parameter.lowerBoundary;
+    });
+    setParametersValues(parametersValues);
+  };
+
+  const changeParameterValue = (parameterId, value) => {
+    console.log(parameterId, value);
+    setParametersValues({ ...parametersValues, [parameterId]: value });
+  };
+
+  useEffect(() => {
+    if (selectedAlgorithm) {
+      const selected = algorithms.algorithms.find(
+        (algorithm) => algorithm.id === parseInt(selectedAlgorithm, 10)
+      );
+      setParameters([selected.parameters]);
+      initializeParametersValues(selected.parameters);
+    }
+  }, [selectedAlgorithm]);
+
+  useEffect(() => {
+    console.log("parameters", parameters);
+  }, [parameters]);
+
+  useEffect(() => {
+    fetchAlgorithms();
+    fetchFitnessFunction();
+  }, []);
+
   const renderAlgorithms = () => {
     return (
       <Card>
@@ -71,15 +112,17 @@ function App() {
                 setSelectedAlgorithm(event.target.value);
               }}
             >
-              {algorithms.map((algorithm) => {
-                return (
-                  <FormControlLabel
-                    value={algorithm.id}
-                    control={<Radio />}
-                    label={algorithm.name}
-                  />
-                );
-              })}
+              {algorithms.algorithms && Array.isArray(algorithms.algorithms)
+                ? algorithms.algorithms.map((algorithm) => {
+                    return (
+                      <FormControlLabel
+                        value={algorithm.id}
+                        control={<Radio />}
+                        label={algorithm.name}
+                      />
+                    );
+                  })
+                : null}
             </RadioGroup>
           </FormControl>
         </CardContent>
@@ -115,22 +158,49 @@ function App() {
     );
   };
 
-  const sendRequest = async () => {
-    await api
-      .post("http://localhost:3001/api/insert", {
-        name: "a4",
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-      .then((response) => {
-        console.log(response);
-      });
+  const renderParameters = () => {
+    if (parameters.length === 0) return null;
+    return (
+      <>
+        <Grid item xs={12}>
+          <Card>
+            <CardContent>
+              {parameters[0].map((parameter) => (
+                <Grid
+                  container
+                  spacing={2}
+                  alignItems="center"
+                  key={parameter.name}
+                >
+                  <Grid item xs={12}>
+                    <InputSlider
+                      changeParameterValue={changeParameterValue}
+                      minValue={parameter.lowerBoundary}
+                      maxValue={parameter.upperBoundary}
+                      name={parameter.name}
+                      id={parameter.id}
+                      isFloatingPoint={true}
+                      // isFloatingPoint={parameter.isFloatingPoint}
+                    />
+                  </Grid>
+                </Grid>
+              ))}
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12}>
+          <Button variant="outlined" onClick={sendRequest} size="large">
+            Send
+          </Button>
+        </Grid>
+      </>
+    );
   };
-  useEffect(() => {
-    fetchAlgorithms();
-    fetchFitnessFunction();
-  }, []);
+  const sendRequest = async () => {
+    console.log(selectedAlgorithm);
+    console.log(selectedFitnessFunction);
+    console.log(parametersValues);
+  };
 
   return (
     <ThemeProvider theme={darkTheme}>
@@ -145,11 +215,8 @@ function App() {
               <Grid item xs={12}>
                 {renderFitnessFunctions()}
               </Grid>
-              <Grid item xs={12}>
-                <Button variant="outlined" onClick={sendRequest} size="large">
-                  Send
-                </Button>
-              </Grid>
+
+              {renderParameters()}
             </Grid>
           </Grid>
           <Grid item xs={9}>

@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: "https://api.example.com",
+  baseURL:
+    "https://metaheuristicalgorithmstesterapi20240102183449.azurewebsites.net/",
 });
 
 export default instance;
