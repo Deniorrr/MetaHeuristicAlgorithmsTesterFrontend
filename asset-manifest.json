@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/MetaHeuristicAlgorithmsTesterFrontend/static/css/main.e6c13ad2.css",
-    "main.js": "/MetaHeuristicAlgorithmsTesterFrontend/static/js/main.af7ad43a.js",
+    "main.js": "/MetaHeuristicAlgorithmsTesterFrontend/static/js/main.b60e339e.js",
     "index.html": "/MetaHeuristicAlgorithmsTesterFrontend/index.html",
     "main.e6c13ad2.css.map": "/MetaHeuristicAlgorithmsTesterFrontend/static/css/main.e6c13ad2.css.map",
-    "main.af7ad43a.js.map": "/MetaHeuristicAlgorithmsTesterFrontend/static/js/main.af7ad43a.js.map"
+    "main.b60e339e.js.map": "/MetaHeuristicAlgorithmsTesterFrontend/static/js/main.b60e339e.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.af7ad43a.js"
+    "static/js/main.b60e339e.js"
   ]
 }
