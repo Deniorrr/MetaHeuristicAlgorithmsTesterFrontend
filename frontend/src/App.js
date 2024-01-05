@@ -1,26 +1,15 @@
 import React, { useState, useEffect } from "react";
-import api from "./components/apiConfig";
 import { useTheme, createTheme, ThemeProvider } from "@mui/material/styles";
-import InputSlider from "./components/InputSlider";
+import TestSingleAlgorithm from "./pages/TestSingleAlgorithm";
+import TestMultipleAlgorithms from "./pages/TestMultipleAlgorithms";
+import AddAlgorithmDll from "./pages/AddAlgorithmDll";
+import { Routes, Route } from "react-router-dom";
+import axios from "axios";
+import api from "./components/apiConfig";
 
-import {
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  FormControl,
-  FormLabel,
-  Button,
-  Card,
-  Grid,
-  CardContent,
-  Container,
-  CssBaseline,
-  Box,
-  Typography,
-  TextField,
-  Input,
-} from "@mui/material";
+import { Container, CssBaseline } from "@mui/material";
 import "./App.css";
+import Navbar from "./pages/Navbar";
 
 const darkTheme = createTheme({
   palette: {
@@ -29,13 +18,9 @@ const darkTheme = createTheme({
 });
 
 function App() {
+  const theme = useTheme();
   const [algorithms, setAlgorithms] = useState([]);
   const [fitnessFunctions, setFitnessFunctions] = useState([]);
-  const [selectedAlgorithm, setSelectedAlgorithm] = useState(null);
-  const [selectedFitnessFunction, setSelectedFitnessFunction] = useState([]);
-  const [parameters, setParameters] = useState([]);
-  const [parametersValues, setParametersValues] = useState({});
-  const theme = useTheme();
 
   const fetchAlgorithms = async () => {
     api
@@ -53,11 +38,13 @@ function App() {
         ]);
       });
   };
+
   const fetchFitnessFunction = async () => {
     api
-      .get("http://localhost:3001/api/get")
+      .get("fitnessfunction")
       .then((response) => {
-        console.log(response);
+        console.log("FF", response);
+        setFitnessFunctions(response.data);
       })
       .catch((error) => {
         setFitnessFunctions([
@@ -67,164 +54,29 @@ function App() {
         ]);
       });
   };
-
-  const initializeParametersValues = (parameters) => {
-    const parametersValues = {};
-    parameters.forEach((parameter) => {
-      parametersValues[parameter.id] = parameter.lowerBoundary;
-    });
-    setParametersValues(parametersValues);
-  };
-
-  const changeParameterValue = (parameterId, value) => {
-    console.log(parameterId, value);
-    setParametersValues({ ...parametersValues, [parameterId]: value });
-  };
-
-  useEffect(() => {
-    if (selectedAlgorithm) {
-      const selected = algorithms.algorithms.find(
-        (algorithm) => algorithm.id === parseInt(selectedAlgorithm, 10)
-      );
-      setParameters([selected.parameters]);
-      initializeParametersValues(selected.parameters);
-    }
-  }, [selectedAlgorithm]);
-
-  useEffect(() => {
-    console.log("parameters", parameters);
-  }, [parameters]);
-
   useEffect(() => {
     fetchAlgorithms();
     fetchFitnessFunction();
   }, []);
 
-  const renderAlgorithms = () => {
-    return (
-      <Card>
-        <CardContent>
-          <FormControl>
-            <FormLabel>Algorithms</FormLabel>
-            <RadioGroup
-              value={selectedAlgorithm}
-              onChange={(event) => {
-                setSelectedAlgorithm(event.target.value);
-              }}
-            >
-              {algorithms.algorithms && Array.isArray(algorithms.algorithms)
-                ? algorithms.algorithms.map((algorithm) => {
-                    return (
-                      <FormControlLabel
-                        value={algorithm.id}
-                        control={<Radio />}
-                        label={algorithm.name}
-                      />
-                    );
-                  })
-                : null}
-            </RadioGroup>
-          </FormControl>
-        </CardContent>
-      </Card>
-    );
-  };
-
-  const renderFitnessFunctions = () => {
-    return (
-      <Card>
-        <CardContent>
-          <FormControl>
-            <FormLabel>FitnessFunctions</FormLabel>
-            <RadioGroup
-              value={selectedFitnessFunction}
-              onChange={(event) => {
-                setSelectedFitnessFunction(event.target.value);
-              }}
-            >
-              {fitnessFunctions.map((fitnessFunction) => {
-                return (
-                  <FormControlLabel
-                    value={fitnessFunction.id}
-                    control={<Radio />}
-                    label={fitnessFunction.name}
-                  />
-                );
-              })}
-            </RadioGroup>
-          </FormControl>
-        </CardContent>
-      </Card>
-    );
-  };
-
-  const renderParameters = () => {
-    if (parameters.length === 0) return null;
-    return (
-      <>
-        <Grid item xs={12}>
-          <Card>
-            <CardContent>
-              {parameters[0].map((parameter) => (
-                <Grid
-                  container
-                  spacing={2}
-                  alignItems="center"
-                  key={parameter.name}
-                >
-                  <Grid item xs={12}>
-                    <InputSlider
-                      changeParameterValue={changeParameterValue}
-                      minValue={parameter.lowerBoundary}
-                      maxValue={parameter.upperBoundary}
-                      name={parameter.name}
-                      id={parameter.id}
-                      isFloatingPoint={true}
-                      // isFloatingPoint={parameter.isFloatingPoint}
-                    />
-                  </Grid>
-                </Grid>
-              ))}
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12}>
-          <Button variant="outlined" onClick={sendRequest} size="large">
-            Send
-          </Button>
-        </Grid>
-      </>
-    );
-  };
-  const sendRequest = async () => {
-    console.log(selectedAlgorithm);
-    console.log(selectedFitnessFunction);
-    console.log(parametersValues);
-  };
-
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
+      <Navbar />
       <Container style={{ marginTop: theme.spacing(2) }}>
-        <Grid container spacing={2}>
-          <Grid item xs={3}>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                {renderAlgorithms()}
-              </Grid>
-              <Grid item xs={12}>
-                {renderFitnessFunctions()}
-              </Grid>
-
-              {renderParameters()}
-            </Grid>
-          </Grid>
-          <Grid item xs={9}>
-            <Card>
-              <CardContent>Result</CardContent>
-            </Card>
-          </Grid>
-        </Grid>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <TestSingleAlgorithm
+                algorithms={algorithms}
+                ffunctions={fitnessFunctions}
+              />
+            }
+          />
+          <Route path="/testMultiple" element={<TestMultipleAlgorithms />} />
+          <Route path="/addAlgorithm" element={<AddAlgorithmDll />} />
+        </Routes>
       </Container>
     </ThemeProvider>
   );

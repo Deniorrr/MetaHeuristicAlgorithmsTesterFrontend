@@ -1,0 +1,17 @@
+GET https://metaheuristicalgorithmstesterapi20240102183449.azurewebsites.net/algorithms
+Content-Type: application/json
+
+###
+POST https://metaheuristicalgorithmstesterapi20240102183449.azurewebsites.net/AlgorithmTester/TestSingleAlgorithm
+Content-Type: application/json
+
+{
+  "algorithmId": 8,
+  "parameters": [
+    20,
+    20,
+    2,
+    1
+  ],
+  "fitnessFunctionID": 5
+}
