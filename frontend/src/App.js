@@ -3,10 +3,12 @@ import { useTheme, createTheme, ThemeProvider } from "@mui/material/styles";
 import TestSingleAlgorithm from "./pages/TestSingleAlgorithm";
 import TestMultipleAlgorithms from "./pages/TestMultipleAlgorithms";
 import AddAlgorithmDll from "./pages/AddAlgorithmDll";
+import AddFitnessFunction from "./pages/AddFitnessFunction";
 import { Routes, Route } from "react-router-dom";
 import api from "./components/apiConfig";
+import TransitionAlerts from "./components/TransitionAlerts";
 
-import { Container, CssBaseline } from "@mui/material";
+import { Container, CssBaseline, Box, Button } from "@mui/material";
 import "./App.css";
 import Navbar from "./pages/Navbar";
 
@@ -20,6 +22,7 @@ function App() {
   const theme = useTheme();
   const [algorithms, setAlgorithms] = useState([]);
   const [fitnessFunctions, setFitnessFunctions] = useState([]);
+  const [alerts, setAlerts] = useState([]); // {severity: "success", message: "Algorithm added successfully"}
 
   const fetchAlgorithms = async () => {
     api
@@ -36,6 +39,29 @@ function App() {
           { name: "a3", id: 2 },
         ]);
       });
+  };
+
+  const renderTransitionAlerts = () => {
+    return alerts.map((alert) => {
+      return (
+        <TransitionAlerts severity={alert.severity} message={alert.message} />
+      );
+    });
+  };
+
+  const addAlert = (_severity, _message) => {
+    setAlerts([...alerts, { severity: _severity, message: _message }]);
+  };
+  const addAlgorithm = (newAlgorithm) => {
+    console.log(algorithms);
+    console.log(newAlgorithm);
+    //add algorithm to algorithms.algorithms
+    algorithms.algorithms.push(newAlgorithm);
+    setAlgorithms(algorithms);
+  };
+  const addFitnessFunction = (newFitnessFunction) => {
+    fitnessFunctions.fitnessFunctions.push(newFitnessFunction);
+    setFitnessFunctions(fitnessFunctions);
   };
 
   const fetchFitnessFunction = async () => {
@@ -70,6 +96,7 @@ function App() {
               <TestSingleAlgorithm
                 algorithms={algorithms}
                 ffunctions={fitnessFunctions}
+                addAlert={addAlert}
               />
             }
           />
@@ -79,10 +106,27 @@ function App() {
           />
           <Route
             path="/MetaHeuristicAlgorithmsTesterFrontend/addAlgorithm"
-            element={<AddAlgorithmDll />}
+            element={
+              <AddAlgorithmDll
+                addAlgorithm={addAlgorithm}
+                addAlert={addAlert}
+              />
+            }
+          />
+          <Route
+            path="/MetaHeuristicAlgorithmsTesterFrontend/addFitnessFunction"
+            element={
+              <AddFitnessFunction
+                addFitnessFunction={addFitnessFunction}
+                addAlert={addAlert}
+              />
+            }
           />
         </Routes>
       </Container>
+      <Box sx={{ position: "fixed", bottom: 0 }}>
+        {renderTransitionAlerts()}
+      </Box>
     </ThemeProvider>
   );
 }

@@ -22,6 +22,9 @@ export default function Navbar() {
       case "/MetaHeuristicAlgorithmsTesterFrontend/addAlgorithm":
         setValue(2);
         break;
+      case "/MetaHeuristicAlgorithmsTesterFrontend/addFitnessFunction":
+        setValue(3);
+        break;
       default:
         setValue(0);
         break;
@@ -45,6 +48,11 @@ export default function Navbar() {
             label="Add Algorithm"
             component={NavLink}
             to="/MetaHeuristicAlgorithmsTesterFrontend/addAlgorithm"
+          />
+          <Tab
+            label="Add Fitness Function"
+            component={NavLink}
+            to="/MetaHeuristicAlgorithmsTesterFrontend/addFitnessFunction"
           />
         </Tabs>
       </Box>

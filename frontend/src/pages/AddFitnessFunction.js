@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import api from "../components/apiConfig";
 
-function AddAlgorithmDll(props) {
+function AddFitnessFunction(props) {
   const theme = useTheme();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -36,13 +36,13 @@ function AddAlgorithmDll(props) {
 
     setErrors(newErrors);
 
-    if (Object.keys(newErrors).length !== 0) {
+    if (Object.keys(newErrors).length == !0) {
       return;
     }
 
     api
       .post(
-        "Algorithms",
+        "FitnessFunction",
         {
           Name: name,
           Description: description,
@@ -55,14 +55,13 @@ function AddAlgorithmDll(props) {
         }
       )
       .then((response) => {
-        props.addAlgorithm(response.data.algorithm);
+        console.log(response.data.fitnessfunction);
+        props.AddFitnessFunction(response.data.fitnessfunction);
         props.addAlert("success", response.data.message);
       })
       .catch((error) => {
         console.log(error);
-        if (error.response.data.message)
-          return props.addAlert("error", error.response.data.message);
-        return props.addAlert("error", "Something went wrong");
+        props.addAlert("error", error.response.data.message);
       });
     console.log("Name:", name);
     console.log("Description:", description);
@@ -76,7 +75,7 @@ function AddAlgorithmDll(props) {
           <Card>
             <CardContent>
               <Typography variant="h5" component="div" gutterBottom>
-                Add Algorithm
+                Add Fitness Function
               </Typography>
               <form noValidate autoComplete="off" onSubmit={handleSubmit}>
                 <TextField
@@ -121,7 +120,7 @@ function AddAlgorithmDll(props) {
                   color="primary"
                   fullWidth
                 >
-                  Add Algorithm
+                  Add Fitness Function
                 </Button>
               </form>
             </CardContent>
@@ -132,4 +131,4 @@ function AddAlgorithmDll(props) {
   );
 }
 
-export default AddAlgorithmDll;
+export default AddFitnessFunction;

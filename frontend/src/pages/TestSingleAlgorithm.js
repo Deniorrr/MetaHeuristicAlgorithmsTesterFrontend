@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import api from "../components/apiConfig";
 import axios from "axios";
 import { useTheme } from "@mui/material/styles";
+import { Tooltip } from "@mui/material";
 import InputSlider from "../components/InputSlider";
 
 import {
@@ -78,11 +79,13 @@ function TestSingleAlgorithm(props) {
               {algorithms.algorithms && Array.isArray(algorithms.algorithms)
                 ? algorithms.algorithms.map((algorithm) => {
                     return (
-                      <FormControlLabel
-                        value={algorithm.id}
-                        control={<Radio />}
-                        label={algorithm.name}
-                      />
+                      <Tooltip title={algorithm.description}>
+                        <FormControlLabel
+                          value={algorithm.id}
+                          control={<Radio />}
+                          label={algorithm.name}
+                        />
+                      </Tooltip>
                     );
                   })
                 : null}
@@ -109,11 +112,13 @@ function TestSingleAlgorithm(props) {
               Array.isArray(fitnessFunctions.fitnessFunctions)
                 ? fitnessFunctions.fitnessFunctions.map((fitnessFunction) => {
                     return (
-                      <FormControlLabel
-                        value={fitnessFunction.id}
-                        control={<Radio />}
-                        label={fitnessFunction.name}
-                      />
+                      <Tooltip title={fitnessFunction.description}>
+                        <FormControlLabel
+                          value={fitnessFunction.id}
+                          control={<Radio />}
+                          label={fitnessFunction.name}
+                        />
+                      </Tooltip>
                     );
                   })
                 : null}
@@ -132,24 +137,26 @@ function TestSingleAlgorithm(props) {
           <Card>
             <CardContent>
               {parameters[0].map((parameter) => (
-                <Grid
-                  container
-                  spacing={2}
-                  alignItems="center"
-                  key={parameter.name}
-                >
-                  <Grid item xs={12}>
-                    <InputSlider
-                      changeParameterValue={changeParameterValue}
-                      minValue={parameter.lowerBoundary}
-                      maxValue={parameter.upperBoundary}
-                      name={parameter.name}
-                      id={parameter.id}
-                      //isFloatingPoint={true}
-                      isFloatingPoint={parameter.isFloatingPoint}
-                    />
+                <Tooltip title={parameter.description} placement="right" arrow>
+                  <Grid
+                    container
+                    spacing={2}
+                    alignItems="center"
+                    key={parameter.name}
+                  >
+                    <Grid item xs={12}>
+                      <InputSlider
+                        changeParameterValue={changeParameterValue}
+                        minValue={parameter.lowerBoundary}
+                        maxValue={parameter.upperBoundary}
+                        name={parameter.name}
+                        id={parameter.id}
+                        //isFloatingPoint={true}
+                        isFloatingPoint={parameter.isFloatingPoint}
+                      />
+                    </Grid>
                   </Grid>
-                </Grid>
+                </Tooltip>
               ))}
             </CardContent>
           </Card>
@@ -170,15 +177,9 @@ function TestSingleAlgorithm(props) {
       const response = await axios.post(
         "https://metaheuristicalgorithmstesterapi20240102183449.azurewebsites.net/AlgorithmTester/TestSingleAlgorithm",
         {
-          // algorithmId: parseInt(selectedAlgorithm),
-          // parameters: parametersValues.flat(0),
-          // fitnessFunctionID: parseInt(selectedFitnessFunction),
           algorithmId: selectedAlgorithm,
           parameters: newParamV,
           fitnessFunctionID: selectedFitnessFunction,
-          // algorithmId: 9,
-          // parameters: [10, 0.5, 0.4, 0.4, 74, 6],
-          // fitnessFunctionID: 5,
         },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -188,7 +189,9 @@ function TestSingleAlgorithm(props) {
         xBest: response.data.xBest,
       });
     } catch (error) {
-      console.log(error);
+      if (error.response.data.message)
+        return props.addAlert("error", error.response.data.message);
+      return props.addAlert("error", "Something went wrong");
     }
   };
 
