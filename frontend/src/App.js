@@ -4,7 +4,6 @@ import TestSingleAlgorithm from "./pages/TestSingleAlgorithm";
 import TestMultipleAlgorithms from "./pages/TestMultipleAlgorithms";
 import AddAlgorithmDll from "./pages/AddAlgorithmDll";
 import { Routes, Route } from "react-router-dom";
-import axios from "axios";
 import api from "./components/apiConfig";
 
 import { Container, CssBaseline } from "@mui/material";

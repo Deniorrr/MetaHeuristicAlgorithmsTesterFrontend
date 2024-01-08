@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../components/apiConfig";
 import axios from "axios";
-import { useTheme, createTheme, ThemeProvider } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import InputSlider from "../components/InputSlider";
 
 import {
@@ -18,12 +18,6 @@ import {
   CssBaseline,
   Typography,
 } from "@mui/material";
-
-const darkTheme = createTheme({
-  palette: {
-    mode: "dark",
-  },
-});
 
 function TestSingleAlgorithm(props) {
   const [selectedAlgorithm, setSelectedAlgorithm] = useState(null);
@@ -199,42 +193,39 @@ function TestSingleAlgorithm(props) {
   };
 
   return (
-    <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
-      <Container style={{ marginTop: theme.spacing(2) }}>
-        <Grid container spacing={2}>
-          <Grid item xs={3}>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                {renderAlgorithms()}
-              </Grid>
-              <Grid item xs={12}>
-                {renderFitnessFunctions()}
-              </Grid>
-
-              {renderParameters()}
+    <Container style={{ marginTop: theme.spacing(2) }}>
+      <Grid container spacing={2}>
+        <Grid item xs={3}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              {renderAlgorithms()}
             </Grid>
-          </Grid>
-          <Grid item xs={9}>
-            <Card>
-              <CardContent>
-                <Typography variant="h5" component="div">
-                  Result
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {RequestResult.fBest ? "fBest: " + RequestResult.fBest : null}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {RequestResult.fBest
-                    ? "xBest: [" + RequestResult.xBest + "]"
-                    : null}
-                </Typography>
-              </CardContent>
-            </Card>
+            <Grid item xs={12}>
+              {renderFitnessFunctions()}
+            </Grid>
+
+            {renderParameters()}
           </Grid>
         </Grid>
-      </Container>
-    </ThemeProvider>
+        <Grid item xs={9}>
+          <Card>
+            <CardContent>
+              <Typography variant="h5" component="div">
+                Result
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {RequestResult.fBest ? "fBest: " + RequestResult.fBest : null}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {RequestResult.fBest
+                  ? "xBest: [" + RequestResult.xBest + "]"
+                  : null}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+    </Container>
   );
 }
 
