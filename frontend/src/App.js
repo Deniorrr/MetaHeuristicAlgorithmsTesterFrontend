@@ -66,7 +66,7 @@ function App() {
       <Container style={{ marginTop: theme.spacing(2) }}>
         <Routes>
           <Route
-            path="/"
+            path="/MetaHeuristicAlgorithmsTesterFrontend"
             element={
               <TestSingleAlgorithm
                 algorithms={algorithms}
@@ -74,8 +74,14 @@ function App() {
               />
             }
           />
-          <Route path="/testMultiple" element={<TestMultipleAlgorithms />} />
-          <Route path="/addAlgorithm" element={<AddAlgorithmDll />} />
+          <Route
+            path="/MetaHeuristicAlgorithmsTesterFrontend/testMultiple"
+            element={<TestMultipleAlgorithms />}
+          />
+          <Route
+            path="/MetaHeuristicAlgorithmsTesterFrontend/addAlgorithm"
+            element={<AddAlgorithmDll />}
+          />
         </Routes>
       </Container>
     </ThemeProvider>
