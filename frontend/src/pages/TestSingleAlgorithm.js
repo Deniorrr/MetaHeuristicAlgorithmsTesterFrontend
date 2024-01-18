@@ -2,16 +2,21 @@ import React, { useState, useEffect } from "react";
 import api from "../components/apiConfig";
 import axios from "axios";
 import { useTheme } from "@mui/material/styles";
-import { Tooltip } from "@mui/material";
-import InputSlider from "../components/InputSlider";
-
 import {
+  Tooltip,
+  IconButton,
+  Box,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Button,
   Radio,
   RadioGroup,
   FormControlLabel,
   FormControl,
   FormLabel,
-  Button,
   Card,
   Grid,
   CardContent,
@@ -19,6 +24,9 @@ import {
   CssBaseline,
   Typography,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+
+import InputSlider from "../components/InputSlider";
 
 function TestSingleAlgorithm(props) {
   const [selectedAlgorithm, setSelectedAlgorithm] = useState(null);
@@ -29,6 +37,18 @@ function TestSingleAlgorithm(props) {
   const [algorithms, setAlgorithms] = useState([]);
   const [fitnessFunctions, setFitnessFunctions] = useState([]);
   const [RequestResult, setRequestResult] = useState({});
+
+  const [open, setOpen] = useState(false);
+  const [toBeDeleted, setToBeDeleted] = useState(null);
+
+  const openDeleteDialog = (id) => {
+    setToBeDeleted(id);
+    setOpen(true);
+  };
+
+  const closeDeleteDialog = () => {
+    setOpen(false);
+  };
 
   const initializeParametersValues = (parameters) => {
     const parametersValues = [];
@@ -47,6 +67,11 @@ function TestSingleAlgorithm(props) {
     const newParametersValues = [...parametersValues];
     newParametersValues[index] = value;
     setParametersValues(newParametersValues);
+  };
+
+  const deleteFitnessFunction = async () => {
+    props.deleteFitnessFunction(toBeDeleted);
+    closeDeleteDialog();
   };
 
   useEffect(() => {
@@ -116,7 +141,20 @@ function TestSingleAlgorithm(props) {
                         <FormControlLabel
                           value={fitnessFunction.id}
                           control={<Radio />}
-                          label={fitnessFunction.name}
+                          label={
+                            <Box display="flex" alignItems="center">
+                              <Typography>{fitnessFunction.name}</Typography>
+                              <IconButton
+                                edge="end"
+                                aria-label="delete"
+                                onClick={() =>
+                                  openDeleteDialog(fitnessFunction.id)
+                                }
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Box>
+                          }
                         />
                       </Tooltip>
                     );
@@ -228,6 +266,29 @@ function TestSingleAlgorithm(props) {
           </Card>
         </Grid>
       </Grid>
+      <Dialog
+        open={open}
+        onClose={closeDeleteDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Delete Fitness Function"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this fitness function?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeDeleteDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={deleteFitnessFunction} color="primary" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }

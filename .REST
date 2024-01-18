@@ -15,3 +15,6 @@ Content-Type: application/json
   ],
   "fitnessFunctionID": 5
 }
+
+###
+DELETE https://metaheuristicalgorithmstesterapi20240102183449.azurewebsites.net/algorithms/11

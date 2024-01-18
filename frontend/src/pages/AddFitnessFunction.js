@@ -65,13 +65,13 @@ function AddFitnessFunction(props) {
         }
       )
       .then((response) => {
-        console.log(response.data.fitnessfunction);
-        props.AddFitnessFunction(response.data.fitnessfunction);
+        console.log(response);
+        props.addFitnessFunction(response.data.fitnessFunction);
         props.addAlert("success", response.data.message);
       })
-      .catch((error) => {
-        console.log(error);
-        props.addAlert("error", error.response.data.message);
+      .catch((e) => {
+        console.log(e);
+        props.addAlert("error", e.response.data.message);
       });
     console.log("Name:", name);
     console.log("Description:", description);
