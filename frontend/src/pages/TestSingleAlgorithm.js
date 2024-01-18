@@ -119,7 +119,11 @@ function TestSingleAlgorithm(props) {
               {algorithms.algorithms && Array.isArray(algorithms.algorithms)
                 ? algorithms.algorithms.map((algorithm) => {
                     return (
-                      <Tooltip title={algorithm.description}>
+                      <Tooltip
+                        title={algorithm.description}
+                        placement="right"
+                        arrow
+                      >
                         <FormControlLabel
                           value={algorithm.id}
                           control={<Radio />}
@@ -165,7 +169,11 @@ function TestSingleAlgorithm(props) {
               Array.isArray(fitnessFunctions.fitnessFunctions)
                 ? fitnessFunctions.fitnessFunctions.map((fitnessFunction) => {
                     return (
-                      <Tooltip title={fitnessFunction.description}>
+                      <Tooltip
+                        title={fitnessFunction.description}
+                        placement="right"
+                        arrow
+                      >
                         <FormControlLabel
                           value={fitnessFunction.id}
                           control={<Radio />}
