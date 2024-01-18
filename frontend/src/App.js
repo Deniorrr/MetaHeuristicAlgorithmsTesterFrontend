@@ -37,24 +37,34 @@ function App() {
   };
 
   const deleteFitnessFunction = async (id) => {
-    api.delete(`fitnessfunction/${id}`).then((response) => {
-      console.log(response);
-      addAlert("success", response.data);
-      fitnessFunctions.fitnessFunctions =
-        fitnessFunctions.fitnessFunctions.filter(
-          (fitnessFunction) => fitnessFunction.id !== id
-        );
-    });
+    api
+      .delete(`fitnessfunction/${id}`)
+      .then((response) => {
+        console.log(response);
+        addAlert("success", response.data);
+        fitnessFunctions.fitnessFunctions =
+          fitnessFunctions.fitnessFunctions.filter(
+            (fitnessFunction) => fitnessFunction.id !== id
+          );
+      })
+      .catch((error) => {
+        addAlert("error", error.response.data);
+      });
   };
 
   const deleteAlgorithm = async (id) => {
-    api.delete(`algorithms/${id}`).then((response) => {
-      console.log(response);
-      addAlert("success", response.data);
-      algorithms.algorithms = algorithms.algorithms.filter(
-        (algorithm) => algorithm.id !== id
-      );
-    });
+    api
+      .delete(`algorithms/${id}`)
+      .then((response) => {
+        console.log(response);
+        addAlert("success", response.data);
+        algorithms.algorithms = algorithms.algorithms.filter(
+          (algorithm) => algorithm.id !== id
+        );
+      })
+      .catch((error) => {
+        addAlert("error", error.response.data);
+      });
   };
 
   const renderTransitionAlerts = () => {
@@ -90,11 +100,7 @@ function App() {
         setFitnessFunctions(response.data);
       })
       .catch((error) => {
-        setFitnessFunctions([
-          { name: "f1", id: 0 },
-          { name: "f2", id: 1 },
-          { name: "f3", id: 2 },
-        ]);
+        setFitnessFunctions([]);
       });
   };
   useEffect(() => {
