@@ -39,6 +39,7 @@ function TestSingleAlgorithm(props) {
   const [RequestResult, setRequestResult] = useState({});
 
   const [open, setOpen] = useState(false);
+  const [algorithmOpen, setAlgorithmOpen] = useState(false);
   const [toBeDeleted, setToBeDeleted] = useState(null);
 
   const openDeleteDialog = (id) => {
@@ -48,6 +49,15 @@ function TestSingleAlgorithm(props) {
 
   const closeDeleteDialog = () => {
     setOpen(false);
+  };
+
+  const openAlgorithmDeleteDialog = (id) => {
+    setToBeDeleted(id);
+    setAlgorithmOpen(true);
+  };
+
+  const closeAlgorithmDeleteDialog = () => {
+    setAlgorithmOpen(false);
   };
 
   const initializeParametersValues = (parameters) => {
@@ -72,6 +82,11 @@ function TestSingleAlgorithm(props) {
   const deleteFitnessFunction = async () => {
     props.deleteFitnessFunction(toBeDeleted);
     closeDeleteDialog();
+  };
+
+  const deleteAlgorithm = async () => {
+    props.deleteAlgorithm(toBeDeleted);
+    closeAlgorithmDeleteDialog();
   };
 
   useEffect(() => {
@@ -108,7 +123,20 @@ function TestSingleAlgorithm(props) {
                         <FormControlLabel
                           value={algorithm.id}
                           control={<Radio />}
-                          label={algorithm.name}
+                          label={
+                            <Box display="flex" alignItems="center">
+                              <Typography>{algorithm.name}</Typography>
+                              <IconButton
+                                edge="end"
+                                aria-label="delete"
+                                onClick={() =>
+                                  openAlgorithmDeleteDialog(algorithm.id)
+                                }
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Box>
+                          }
                         />
                       </Tooltip>
                     );
@@ -266,6 +294,27 @@ function TestSingleAlgorithm(props) {
           </Card>
         </Grid>
       </Grid>
+      <Dialog
+        open={algorithmOpen}
+        onClose={closeAlgorithmDeleteDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Delete Algorithm"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this algorithm?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeAlgorithmDeleteDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={deleteAlgorithm} color="primary" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Dialog
         open={open}
         onClose={closeDeleteDialog}

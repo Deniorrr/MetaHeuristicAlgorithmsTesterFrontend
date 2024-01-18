@@ -47,6 +47,16 @@ function App() {
     });
   };
 
+  const deleteAlgorithm = async (id) => {
+    api.delete(`algorithms/${id}`).then((response) => {
+      console.log(response);
+      addAlert("success", response.data);
+      algorithms.algorithms = algorithms.algorithms.filter(
+        (algorithm) => algorithm.id !== id
+      );
+    });
+  };
+
   const renderTransitionAlerts = () => {
     return alerts.map((alert) => {
       return (
@@ -106,6 +116,7 @@ function App() {
                 ffunctions={fitnessFunctions}
                 addAlert={addAlert}
                 deleteFitnessFunction={deleteFitnessFunction}
+                deleteAlgorithm={deleteAlgorithm}
               />
             }
           />
