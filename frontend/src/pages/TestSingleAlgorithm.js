@@ -38,6 +38,7 @@ function TestSingleAlgorithm(props) {
   const [fitnessFunctions, setFitnessFunctions] = useState([]);
   const [RequestResult, setRequestResult] = useState({});
   const [safeMode, setSafeMode] = useState(false);
+  const [selectedFFObject, setSelectedFFObject] = useState({});
 
   const [open, setOpen] = useState(false);
   const [algorithmOpen, setAlgorithmOpen] = useState(false);
@@ -51,6 +52,15 @@ function TestSingleAlgorithm(props) {
     setSafeMode(event.target.checked);
   };
 
+  useEffect(() => {
+    if (fitnessFunctions.fitnessFunctions)
+      setSelectedFFObject(
+        fitnessFunctions.fitnessFunctions.find(
+          (fitnessFunction) =>
+            fitnessFunction.id === parseInt(selectedFitnessFunction, 10)
+        )
+      );
+  }, [selectedFitnessFunction]);
   const closeDeleteDialog = () => {
     setOpen(false);
   };
@@ -251,6 +261,9 @@ function TestSingleAlgorithm(props) {
                         id={parameter.id}
                         //isFloatingPoint={true}
                         isFloatingPoint={parameter.isFloatingPoint}
+                        selectedFFParametersAmount={
+                          selectedFFObject.numberOfParameters
+                        }
                       />
                     </Grid>
                   </Grid>

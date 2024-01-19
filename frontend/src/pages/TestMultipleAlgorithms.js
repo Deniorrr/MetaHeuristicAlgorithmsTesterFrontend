@@ -42,6 +42,7 @@ function TestMultipleAlgorithms(props) {
   const [open, setOpen] = useState(false);
   const [algorithmOpen, setAlgorithmOpen] = useState(false);
   const [toBeDeleted, setToBeDeleted] = useState(null);
+  const [selectedFFObject, setSelectedFFObject] = useState({});
 
   const [selectedAlgorithms, setSelectedAlgorithms] = useState([]);
 
@@ -62,6 +63,16 @@ function TestMultipleAlgorithms(props) {
   const closeAlgorithmDeleteDialog = () => {
     setAlgorithmOpen(false);
   };
+
+  useEffect(() => {
+    if (fitnessFunctions.fitnessFunctions)
+      setSelectedFFObject(
+        fitnessFunctions.fitnessFunctions.find(
+          (fitnessFunction) =>
+            fitnessFunction.id === parseInt(selectedFitnessFunction, 10)
+        )
+      );
+  }, [selectedFitnessFunction]);
 
   const initializeParametersValues = (parameters, id) => {
     const params = [];
@@ -274,6 +285,9 @@ function TestMultipleAlgorithms(props) {
                         id={parameter.id}
                         //isFloatingPoint={true}
                         isFloatingPoint={parameter.isFloatingPoint}
+                        selectedFFParametersAmount={
+                          selectedFFObject.numberOfParameters
+                        }
                       />
                     </Grid>
                   </Grid>

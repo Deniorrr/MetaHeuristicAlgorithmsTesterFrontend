@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -12,10 +12,10 @@ const Input = styled(MuiInput)`
 
 export default function InputSlider(props) {
   const minValue = props.minValue;
-  const maxValue = props.maxValue;
+  const [maxValue, setMaxValue] = useState(props.maxValue);
   const id = props.id;
   const step = props.isFloatingPoint ? (maxValue - minValue) / 100 : 1;
-  const [value, setValue] = React.useState(props.minValue);
+  const [value, setValue] = useState(props.minValue);
 
   const handleSliderChange = (event, newValue) => {
     setValue(newValue);
@@ -27,6 +27,17 @@ export default function InputSlider(props) {
     props.changeParameterValue(id, event.target.value);
   };
 
+  useEffect(() => {
+    if (
+      props.selectedFFParametersAmount !== 0 &&
+      props.selectedFFParametersAmount < maxValue &&
+      props.name.toLowerCase() === "dimension"
+    ) {
+      setValue(minValue);
+      setMaxValue(props.selectedFFParametersAmount);
+      props.changeParameterValue(id, props.minValue);
+    }
+  }, [props.selectedFFParametersAmount, value]);
   const handleBlur = () => {
     if (value < minValue) {
       setValue(minValue);
