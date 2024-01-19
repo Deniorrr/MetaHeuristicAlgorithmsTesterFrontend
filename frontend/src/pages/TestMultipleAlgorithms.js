@@ -334,7 +334,7 @@ function TestMultipleAlgorithms(props) {
   return (
     <Container style={{ marginTop: theme.spacing(2) }}>
       <Grid container spacing={2}>
-        <Grid item xs={4} className="aside">
+        <Grid item xs={12} sm={6} md={3} className="aside">
           <Grid container spacing={2}>
             <Grid item xs={12}>
               {renderAlgorithms()}
@@ -368,7 +368,7 @@ function TestMultipleAlgorithms(props) {
             ) : null}
           </Grid>
         </Grid>
-        <Grid item xs={8}>
+        <Grid item xs={12} sm={6} md={9}>
           <Card>
             <CardContent>
               <Typography variant="h5" component="div">
