@@ -61,7 +61,6 @@ export default function Navbar() {
               label="Test multiple functions"
               component={NavLink}
               to="/MetaHeuristicAlgorithmsTesterFrontend/testMultiple"
-              disabled
             />
             <Tab
               label="Add Algorithm"

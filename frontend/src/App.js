@@ -128,7 +128,15 @@ function App() {
           />
           <Route
             path="/MetaHeuristicAlgorithmsTesterFrontend/testMultiple"
-            element={<TestMultipleAlgorithms />}
+            element={
+              <TestMultipleAlgorithms
+                algorithms={algorithms}
+                ffunctions={fitnessFunctions}
+                addAlert={addAlert}
+                deleteFitnessFunction={deleteFitnessFunction}
+                deleteAlgorithm={deleteAlgorithm}
+              />
+            }
           />
           <Route
             path="/MetaHeuristicAlgorithmsTesterFrontend/addAlgorithm"

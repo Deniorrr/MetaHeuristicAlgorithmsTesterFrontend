@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import api from "../components/apiConfig";
-import axios from "axios";
 import { useTheme } from "@mui/material/styles";
 import {
   Tooltip,
@@ -23,6 +22,7 @@ import {
   Container,
   CssBaseline,
   Typography,
+  Checkbox,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -30,13 +30,14 @@ import InputSlider from "../components/InputSlider";
 
 function TestSingleAlgorithm(props) {
   const [selectedAlgorithm, setSelectedAlgorithm] = useState(null);
-  const [selectedFitnessFunction, setSelectedFitnessFunction] = useState([]);
+  const [selectedFitnessFunction, setSelectedFitnessFunction] = useState(null);
   const [parameters, setParameters] = useState([]);
   const [parametersValues, setParametersValues] = useState({});
   const theme = useTheme();
   const [algorithms, setAlgorithms] = useState([]);
   const [fitnessFunctions, setFitnessFunctions] = useState([]);
   const [RequestResult, setRequestResult] = useState({});
+  const [safeMode, setSafeMode] = useState(false);
 
   const [open, setOpen] = useState(false);
   const [algorithmOpen, setAlgorithmOpen] = useState(false);
@@ -45,6 +46,9 @@ function TestSingleAlgorithm(props) {
   const openDeleteDialog = (id) => {
     setToBeDeleted(id);
     setOpen(true);
+  };
+  const handleSafeModeChange = (event) => {
+    setSafeMode(event.target.checked);
   };
 
   const closeDeleteDialog = () => {
@@ -66,6 +70,26 @@ function TestSingleAlgorithm(props) {
       parametersValues[parameter.id] = parameter.lowerBoundary;
     });
     setParametersValues(parametersValues);
+  };
+
+  const downloadFile = async () => {
+    api
+      .get(`Reports/PDF/${RequestResult.executedTestId}`)
+      .then((response) => {
+        console.log(response);
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute(
+          "download",
+          `report${RequestResult.executedTestId}.pdf`
+        );
+        document.body.appendChild(link);
+        link.click();
+      })
+      .catch((error) => {
+        props.addAlert("error", "Could not download file properly");
+      });
   };
 
   useEffect(() => {
@@ -245,11 +269,20 @@ function TestSingleAlgorithm(props) {
   };
 
   const sendRequest = async () => {
+    if (!selectedAlgorithm)
+      return props.addAlert("error", "Select an algorithm");
+    if (!selectedFitnessFunction)
+      return props.addAlert("error", "Select a fitness function");
+
     const newParamV = parametersValues.filter((a) => a); //deletes empty values
+
     console.log(newParamV);
+    let endpoint = "AlgorithmTester/TestSingleAlgorithm";
+    if (safeMode) endpoint = "AlgorithmTester/TestSingleAlgorithmSafeMode";
+
     try {
-      const response = await axios.post(
-        "https://metaheuristicalgorithmstesterapi20240102183449.azurewebsites.net/AlgorithmTester/TestSingleAlgorithm",
+      const response = await api.post(
+        endpoint,
         {
           algorithmId: selectedAlgorithm,
           parameters: newParamV,
@@ -258,10 +291,7 @@ function TestSingleAlgorithm(props) {
         { headers: { "Content-Type": "application/json" } }
       );
       console.log(response);
-      setRequestResult({
-        fBest: response.data.fBest,
-        xBest: response.data.xBest,
-      });
+      setRequestResult(response.data);
     } catch (error) {
       if (error.response.data.message)
         return props.addAlert("error", error.response.data.message);
@@ -269,10 +299,30 @@ function TestSingleAlgorithm(props) {
     }
   };
 
+  const renderResult = () => {
+    return (
+      <>
+        <Grid item xs={12}>
+          <Typography variant="h6" component="div">
+            fBest: {RequestResult.fBest}
+          </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography variant="h6" component="div">
+            xBest: {RequestResult.xBest}
+          </Typography>
+          <Button variant="outlined" onClick={downloadFile} size="large">
+            Download Report
+          </Button>
+        </Grid>
+      </>
+    );
+  };
+
   return (
     <Container style={{ marginTop: theme.spacing(2) }}>
       <Grid container spacing={2}>
-        <Grid item xs={3}>
+        <Grid item xs={12} sm={6} md={3} className="aside">
           <Grid container spacing={2}>
             <Grid item xs={12}>
               {renderAlgorithms()}
@@ -282,22 +332,34 @@ function TestSingleAlgorithm(props) {
             </Grid>
 
             {renderParameters()}
+            <Grid item xs={12}>
+              <Card>
+                <CardContent>
+                  <FormControl>
+                    <FormLabel>Options</FormLabel>
+                    <Tooltip
+                      title="Safe mode activates a mechanism, that prevents from loosing data "
+                      placement="right"
+                      arrow
+                    >
+                      <FormControlLabel
+                        control={<Checkbox onChange={handleSafeModeChange} />}
+                        label="Safe Mode"
+                      />
+                    </Tooltip>
+                  </FormControl>
+                </CardContent>
+              </Card>
+            </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={9}>
+        <Grid item xs={12} sm={6} md={9}>
           <Card>
             <CardContent>
               <Typography variant="h5" component="div">
                 Result
               </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {RequestResult.fBest ? "fBest: " + RequestResult.fBest : null}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {RequestResult.fBest
-                  ? "xBest: [" + RequestResult.xBest + "]"
-                  : null}
-              </Typography>
+              {RequestResult.fBest ? renderResult() : null}
             </CardContent>
           </Card>
         </Grid>
