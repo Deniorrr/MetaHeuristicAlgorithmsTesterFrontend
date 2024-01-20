@@ -336,66 +336,68 @@ function TestMultipleAlgorithms(props) {
       <Grid item xs={12}>
         <Card>
           <CardContent>
-            <Tooltip
-              title="Dimension of the fitness function"
-              placement="right"
-              arrow
-            >
-              <Grid container spacing={2} alignItems="center">
-                <Grid item xs={12}>
-                  <InputSlider
-                    changeParameterValue={(_id, _value) => setDimension(_value)}
-                    minValue={2}
-                    maxValue={dimension}
-                    name={"Dimension"}
-                    id={"dimension"}
-                    isFloatingPoint={false}
-                    selectedFFParametersAmount={
-                      selectedFFObject.numberOfParameters
-                    }
-                  />
-                </Grid>
-              </Grid>
-            </Tooltip>
-            <Tooltip title="Amount of iterations" placement="right" arrow>
-              <Grid container spacing={2} alignItems="center">
-                <Grid item xs={12}>
-                  <InputSlider
-                    changeParameterValue={(_id, _value) => setDepth(_value)}
-                    minValue={10}
-                    maxValue={100}
-                    name={"Depth"}
-                    id={"Depth"}
-                    isFloatingPoint={false}
-                    selectedFFParametersAmount={
-                      selectedFFObject.numberOfParameters
-                    }
-                  />
-                </Grid>
-              </Grid>
-            </Tooltip>
-            <Tooltip
-              title="A result that satisfies you"
-              placement="right"
-              arrow
-            >
-              <Grid container spacing={2} alignItems="center" marginTop={1}>
-                <Grid item xs={12}>
-                  <TextField
-                    type="number"
-                    inputProps={{ step: Math.pow(10, -3) }}
-                    label="Satisfying Result"
-                    value={satisfiedResult}
-                    onChange={(e) => {
-                      console.log(e.target.value);
-                      setSatisfiedResult(e.target.value);
-                    }}
-                  />
-                </Grid>
-              </Grid>
-            </Tooltip>
             <FormControl>
-              <FormLabel>Options</FormLabel>
+              <Tooltip
+                title="Dimension of the fitness function"
+                placement="right"
+                arrow
+              >
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={12}>
+                    <InputSlider
+                      changeParameterValue={(_id, _value) =>
+                        setDimension(_value)
+                      }
+                      minValue={2}
+                      maxValue={dimension}
+                      name={"Dimension"}
+                      id={"dimension"}
+                      isFloatingPoint={false}
+                      selectedFFParametersAmount={
+                        selectedFFObject.numberOfParameters
+                      }
+                    />
+                  </Grid>
+                </Grid>
+              </Tooltip>
+              <Tooltip title="Amount of iterations" placement="right" arrow>
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={12}>
+                    <InputSlider
+                      changeParameterValue={(_id, _value) => setDepth(_value)}
+                      minValue={10}
+                      maxValue={100}
+                      name={"Depth"}
+                      id={"Depth"}
+                      isFloatingPoint={false}
+                      selectedFFParametersAmount={
+                        selectedFFObject.numberOfParameters
+                      }
+                    />
+                  </Grid>
+                </Grid>
+              </Tooltip>
+              <Tooltip
+                title="A result that satisfies you"
+                placement="right"
+                arrow
+              >
+                <Grid container spacing={2} alignItems="center" marginTop={1}>
+                  <Grid item xs={12}>
+                    <TextField
+                      type="number"
+                      inputProps={{ step: Math.pow(10, -3) }}
+                      label="Satisfying Result"
+                      value={satisfiedResult}
+                      onChange={(e) => {
+                        console.log(e.target.value);
+                        setSatisfiedResult(e.target.value);
+                      }}
+                    />
+                  </Grid>
+                </Grid>
+              </Tooltip>
+
               <Tooltip
                 title="Safe mode activates a mechanism, that prevents from loosing data during testing."
                 placement="right"
@@ -485,6 +487,12 @@ function TestMultipleAlgorithms(props) {
       dimension: dimension,
       satisfiedResult: number,
     };
+    let endpoint = "AlgorithmTester/TestMultipleAlgorithms";
+    if (safeMode) {
+      endpoint = "AlgorithmTester/TestMultipleAlgorithmsSafeMode";
+      params.interval = safeModeInterval;
+    }
+
     console.log(params);
     try {
       const response = await api.post(
@@ -523,17 +531,6 @@ function TestMultipleAlgorithms(props) {
     //     return props.addAlert("error", error.response.data.message);
     //   return props.addAlert("error", "Something went wrong");
     // }
-  };
-
-  const renderXbest = (xBest) => {
-    const elements = xBest.map((x, index) => {
-      return (
-        <Typography variant="body1" component="div">
-          x{index + 1}: {x}
-        </Typography>
-      );
-    });
-    return elements;
   };
 
   const renderResultParameters = (_parameters, algId) => {
@@ -669,20 +666,12 @@ function TestMultipleAlgorithms(props) {
               <Paper elevation={6}>{renderResultValues(a)}</Paper>
             </Grid>
           </Grid>
-          {/* <Typography variant="body1" component="div"  sx={6}>
-          </Typography> */}
+          <Divider />
         </>
       );
     });
 
-    return (
-      <>
-        {elements}
-        <Button variant="outlined" onClick={downloadFile} size="large">
-          Download Report
-        </Button>
-      </>
-    );
+    return elements;
   };
 
   return (
@@ -740,8 +729,23 @@ function TestMultipleAlgorithms(props) {
                 textAlign={"center"}
               >
                 Result
+                {RequestResult.executedAlgorithms ? (
+                  <Button
+                    variant="outlined"
+                    onClick={downloadFile}
+                    size="large"
+                    style={{
+                      marginLeft: "auto",
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    Download Report
+                  </Button>
+                ) : null}
               </Typography>
               <Divider />
+
               {renderResult()}
             </CardContent>
           </Card>

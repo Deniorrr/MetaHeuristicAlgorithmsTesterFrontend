@@ -17,12 +17,19 @@ import {
   FormControl,
   FormLabel,
   Card,
+  Divider,
   Grid,
   CardContent,
   Container,
   CssBaseline,
   Typography,
   Checkbox,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Paper,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -40,6 +47,9 @@ function TestSingleAlgorithm(props) {
   const [safeMode, setSafeMode] = useState(false);
   const [selectedFFObject, setSelectedFFObject] = useState({});
   const [safeModeInterval, setSafeModeInterval] = useState(1000); //in miliseconds
+
+  const [savedParameters, setSavedParameters] = useState([]);
+  const [savedParametersValues, setSavedParametersValues] = useState([]);
 
   const [open, setOpen] = useState(false);
   const [algorithmOpen, setAlgorithmOpen] = useState(false);
@@ -324,6 +334,8 @@ function TestSingleAlgorithm(props) {
       const response = await api.post(endpoint, params, {
         headers: { "Content-Type": "application/json" },
       });
+      setSavedParameters(parameters);
+      setSavedParametersValues(newParamV);
       console.log(response);
       setRequestResult(response.data);
     } catch (error) {
@@ -333,23 +345,151 @@ function TestSingleAlgorithm(props) {
     }
   };
 
+  const renderResultParameters = () => {
+    const elements = [];
+    console.log(savedParameters);
+    console.log(savedParametersValues);
+    for (let i = 0; i < savedParametersValues.length; i++) {
+      elements.push({
+        id: i,
+        name: savedParameters[0][i].name,
+        value: savedParametersValues[i],
+      });
+    }
+    console.log(elements);
+    return (
+      <Table sx={5} aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell colSpan={2}>
+              <Typography variant="h5" component="div" textAlign={"center"}>
+                Parameters used
+              </Typography>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>
+              <strong>Parameter name</strong>
+            </TableCell>
+            <TableCell>
+              <strong>Value</strong>
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {elements.map((e) => (
+            <TableRow
+              key={e.id}
+              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+            >
+              <TableCell>{e.name}</TableCell>
+              <TableCell>{e.value}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    );
+    // return elements.map((element) => {
+    //   return (
+    //     <Typography variant="body1" component="div">
+    //       {element.name}: {element.value}
+    //     </Typography>
+    //   );
+    // });
+  };
+
+  const renderResultValues = () => {
+    const elements = [];
+    elements.push({
+      id: 0,
+      name: "fBest",
+      value: RequestResult.fBest,
+    });
+    for (let i = 0; i < RequestResult.xBest.length; i++) {
+      elements.push({
+        id: i + 1,
+        name: "x" + (i + 1),
+        value: RequestResult.xBest[i],
+      });
+    }
+
+    return (
+      <Table sx={5} aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell colSpan={2}>
+              <Typography variant="h5" component="div" textAlign={"center"}>
+                Values found
+              </Typography>
+            </TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>
+              <strong>Name</strong>
+            </TableCell>
+            <TableCell>
+              <strong>Value</strong>
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {elements.map((e) => (
+            <TableRow
+              key={e.id}
+              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+            >
+              <TableCell>{e.name}</TableCell>
+              <TableCell>{e.value}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      // <>
+      //   <Typography variant="body1" component="div" marginBottom={1}>
+      //     fBest: {a.fBest}
+      //   </Typography>
+      //   {renderXbest(a.xBest)}
+      // </>
+    );
+  };
+
   const renderResult = () => {
     return (
       <>
-        <Grid item xs={12}>
-          <Typography variant="h6" component="div">
-            fBest: {RequestResult.fBest}
-          </Typography>
+        <Typography
+          variant="h5"
+          component="div"
+          marginBottom={1}
+          marginTop={1}
+          textAlign={"center"}
+        >
+          Algorithm: <strong>{RequestResult.testedAlgorithmName}</strong>
+        </Typography>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} sm={5} marginBottom={1}>
+            <Paper elevation={6}>{renderResultParameters()}</Paper>
+          </Grid>
+          <Grid item xs={12} sm={7} marginBottom={1}>
+            <Paper elevation={6}>{renderResultValues()}</Paper>
+          </Grid>
         </Grid>
-        <Grid item xs={12}>
-          <Typography variant="h6" component="div">
-            xBest: {RequestResult.xBest}
-          </Typography>
-          <Button variant="outlined" onClick={downloadFile} size="large">
-            Download Report
-          </Button>
-        </Grid>
+        <Divider />
       </>
+      // <>
+      //   <Grid item xs={12}>
+      //     <Typography variant="h6" component="div">
+      //       fBest: {RequestResult.fBest}
+      //     </Typography>
+      //   </Grid>
+      //   <Grid item xs={12}>
+      //     <Typography variant="h6" component="div">
+      //       xBest: {RequestResult.xBest}
+      //     </Typography>
+      //     <Button variant="outlined" onClick={downloadFile} size="large">
+      //       Download Report
+      //     </Button>
+      //   </Grid>
+      // </>
     );
   };
 
@@ -411,12 +551,40 @@ function TestSingleAlgorithm(props) {
         <Grid item xs={12} sm={6} md={9}>
           <Card>
             <CardContent>
+              <Typography
+                variant="h4"
+                component="div"
+                marginBottom={1}
+                textAlign={"center"}
+              >
+                Result
+                {RequestResult.fBest ? (
+                  <Button
+                    variant="outlined"
+                    onClick={downloadFile}
+                    size="large"
+                    style={{
+                      marginLeft: "auto",
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    Download Report
+                  </Button>
+                ) : null}
+              </Typography>
+              <Divider />
+              {RequestResult.fBest ? renderResult() : null}
+            </CardContent>
+          </Card>
+          {/* <Card>
+            <CardContent>
               <Typography variant="h5" component="div">
                 Result
               </Typography>
               {RequestResult.fBest ? renderResult() : null}
             </CardContent>
-          </Card>
+          </Card> */}
         </Grid>
       </Grid>
       <Dialog
