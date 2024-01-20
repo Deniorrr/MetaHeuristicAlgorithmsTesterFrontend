@@ -1,7 +1,7 @@
 import React from "react";
 
 function CheckSingle() {
-  return <div>CheckSingle</div>;
+  return <div>checkSingle</div>;
 }
 
 export default CheckSingle;

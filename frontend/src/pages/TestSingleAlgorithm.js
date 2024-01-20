@@ -39,6 +39,7 @@ function TestSingleAlgorithm(props) {
   const [RequestResult, setRequestResult] = useState({});
   const [safeMode, setSafeMode] = useState(false);
   const [selectedFFObject, setSelectedFFObject] = useState({});
+  const [safeModeInterval, setSafeModeInterval] = useState(1000); //in miliseconds
 
   const [open, setOpen] = useState(false);
   const [algorithmOpen, setAlgorithmOpen] = useState(false);
@@ -118,6 +119,10 @@ function TestSingleAlgorithm(props) {
     setParametersValues(newParametersValues);
   };
 
+  const changeIntervalValue = (name, value) => {
+    setSafeModeInterval(value);
+  };
+
   const deleteFitnessFunction = async () => {
     props.deleteFitnessFunction(toBeDeleted);
     closeDeleteDialog();
@@ -162,6 +167,7 @@ function TestSingleAlgorithm(props) {
                         title={algorithm.description}
                         placement="right"
                         arrow
+                        key={algorithm.id}
                       >
                         <FormControlLabel
                           value={algorithm.id}
@@ -212,6 +218,7 @@ function TestSingleAlgorithm(props) {
                         title={fitnessFunction.description}
                         placement="right"
                         arrow
+                        key={fitnessFunction.id}
                       >
                         <FormControlLabel
                           value={fitnessFunction.id}
@@ -250,7 +257,12 @@ function TestSingleAlgorithm(props) {
           <Card>
             <CardContent>
               {parameters[0].map((parameter) => (
-                <Tooltip title={parameter.description} placement="right" arrow>
+                <Tooltip
+                  title={parameter.description}
+                  placement="right"
+                  arrow
+                  key={parameter.id}
+                >
                   <Grid
                     container
                     spacing={2}
@@ -296,18 +308,22 @@ function TestSingleAlgorithm(props) {
 
     console.log(newParamV);
     let endpoint = "AlgorithmTester/TestSingleAlgorithm";
-    if (safeMode) endpoint = "AlgorithmTester/TestSingleAlgorithmSafeMode";
+
+    const params = {
+      algorithmId: selectedAlgorithm,
+      parameters: newParamV,
+      fitnessFunctionID: selectedFitnessFunction,
+    };
+    if (safeMode) {
+      endpoint = "AlgorithmTester/TestSingleAlgorithmSafeMode";
+      params.timerFrequency = safeModeInterval;
+      console.log("safe mode", safeModeInterval);
+    }
 
     try {
-      const response = await api.post(
-        endpoint,
-        {
-          algorithmId: selectedAlgorithm,
-          parameters: newParamV,
-          fitnessFunctionID: selectedFitnessFunction,
-        },
-        { headers: { "Content-Type": "application/json" } }
-      );
+      const response = await api.post(endpoint, params, {
+        headers: { "Content-Type": "application/json" },
+      });
       console.log(response);
       setRequestResult(response.data);
     } catch (error) {
@@ -349,14 +365,13 @@ function TestSingleAlgorithm(props) {
               {renderFitnessFunctions()}
             </Grid>
 
-            {renderParameters()}
             <Grid item xs={12}>
               <Card>
                 <CardContent>
                   <FormControl>
                     <FormLabel>Options</FormLabel>
                     <Tooltip
-                      title="Safe mode activates a mechanism, that prevents from loosing data "
+                      title="Safe mode activates a mechanism, that prevents from loosing data during testing."
                       placement="right"
                       arrow
                     >
@@ -365,10 +380,32 @@ function TestSingleAlgorithm(props) {
                         label="Safe Mode"
                       />
                     </Tooltip>
+                    {safeMode ? (
+                      <Tooltip
+                        title="Interval (in miliseconds) between each Safe Mode save)"
+                        placement="right"
+                        arrow
+                      >
+                        <Grid container spacing={2} alignItems="center">
+                          <Grid item xs={12}>
+                            <InputSlider
+                              changeParameterValue={changeIntervalValue}
+                              minValue={1000}
+                              maxValue={10000}
+                              name="Interval"
+                              id="Interval"
+                              isFloatingPoint={false}
+                              selectedFFParametersAmount={1}
+                            />
+                          </Grid>
+                        </Grid>
+                      </Tooltip>
+                    ) : null}
                   </FormControl>
                 </CardContent>
               </Card>
             </Grid>
+            {renderParameters()}
           </Grid>
         </Grid>
         <Grid item xs={12} sm={6} md={9}>

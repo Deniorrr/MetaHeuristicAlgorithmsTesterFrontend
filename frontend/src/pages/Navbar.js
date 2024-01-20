@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
-import PropTypes from "prop-types";
+import React, { useEffect } from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -25,7 +23,7 @@ const greenTheme = createTheme({
 
 export default function Navbar() {
   const [value, setValue] = React.useState(0);
-
+  const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
@@ -49,10 +47,11 @@ export default function Navbar() {
         setValue(5);
         break;
       default:
+        navigate("/MetaHeuristicAlgorithmsTesterFrontend/");
         setValue(0);
         break;
     }
-  }, [location]);
+  }, [location, navigate]);
   return (
     <Box sx={{ width: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>

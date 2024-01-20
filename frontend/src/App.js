@@ -11,7 +11,7 @@ import api from "./components/apiConfig";
 
 import TransitionAlerts from "./components/TransitionAlerts";
 
-import { Container, CssBaseline, Box, Button } from "@mui/material";
+import { Container, CssBaseline, Box } from "@mui/material";
 import "./App.css";
 import Navbar from "./pages/Navbar";
 
