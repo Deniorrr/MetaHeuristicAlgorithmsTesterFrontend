@@ -85,7 +85,7 @@ function TestSingleAlgorithm(props) {
 
   const downloadFile = async () => {
     api
-      .get(`Reports/PDF/${RequestResult.executedTestId}`, {
+      .get(`Reports/PDF/Single/${RequestResult.executedTestId}`, {
         responseType: "arraybuffer",
       })
       .then((response) => {

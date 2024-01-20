@@ -1,4 +1,11 @@
 .aside {
   overflow: auto;
+  overflow: auto;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
   max-height: calc(100vh - 80px);
+}
+
+.aside::-webkit-scrollbar {
+  display: none;
 }
