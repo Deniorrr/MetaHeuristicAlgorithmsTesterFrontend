@@ -84,10 +84,13 @@ function TestSingleAlgorithm(props) {
 
   const downloadFile = async () => {
     api
-      .get(`Reports/PDF/${RequestResult.executedTestId}`)
+      .get(`Reports/PDF/${RequestResult.executedTestId}`, {
+        responseType: "arraybuffer",
+      })
       .then((response) => {
-        console.log(response);
-        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const url = window.URL.createObjectURL(
+          new Blob([response.data], { type: "application/pdf" })
+        );
         const link = document.createElement("a");
         link.href = url;
         link.setAttribute(
@@ -96,8 +99,10 @@ function TestSingleAlgorithm(props) {
         );
         document.body.appendChild(link);
         link.click();
+        setTimeout(() => window.URL.revokeObjectURL(url), 100);
       })
       .catch((error) => {
+        console.log(error);
         props.addAlert("error", "Could not download file properly");
       });
   };

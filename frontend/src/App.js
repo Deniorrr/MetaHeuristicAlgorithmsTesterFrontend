@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useTheme, createTheme, ThemeProvider } from "@mui/material/styles";
+import CheckSingle from "./pages/CheckSingle";
+import CheckMultiple from "./pages/CheckMultiple";
 import TestSingleAlgorithm from "./pages/TestSingleAlgorithm";
 import TestMultipleAlgorithms from "./pages/TestMultipleAlgorithms";
 import AddAlgorithmDll from "./pages/AddAlgorithmDll";
 import AddFitnessFunction from "./pages/AddFitnessFunction";
 import { Routes, Route } from "react-router-dom";
 import api from "./components/apiConfig";
+
 import TransitionAlerts from "./components/TransitionAlerts";
 
 import { Container, CssBaseline, Box, Button } from "@mui/material";
@@ -155,6 +158,14 @@ function App() {
                 addAlert={addAlert}
               />
             }
+          />
+          <Route
+            path="/MetaHeuristicAlgorithmsTesterFrontend/checkSingleStatus"
+            element={<CheckSingle />}
+          />
+          <Route
+            path="/MetaHeuristicAlgorithmsTesterFrontend/checkMultipleStatus"
+            element={<CheckMultiple />}
           />
         </Routes>
       </Container>

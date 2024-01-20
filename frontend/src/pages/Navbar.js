@@ -42,6 +42,12 @@ export default function Navbar() {
       case "/MetaHeuristicAlgorithmsTesterFrontend/addFitnessFunction":
         setValue(3);
         break;
+      case "/MetaHeuristicAlgorithmsTesterFrontend/checkSingleStatus":
+        setValue(4);
+        break;
+      case "/MetaHeuristicAlgorithmsTesterFrontend/checkMultipleStatus":
+        setValue(5);
+        break;
       default:
         setValue(0);
         break;
@@ -71,6 +77,16 @@ export default function Navbar() {
               label="Add Fitness Function"
               component={NavLink}
               to="/MetaHeuristicAlgorithmsTesterFrontend/addFitnessFunction"
+            />
+            <Tab
+              label="Check Single test status"
+              component={NavLink}
+              to="/MetaHeuristicAlgorithmsTesterFrontend/checkSingleStatus"
+            />
+            <Tab
+              label="Check multiple test status"
+              component={NavLink}
+              to="/MetaHeuristicAlgorithmsTesterFrontend/checkMultipleStatus"
             />
           </Tabs>
         </ThemeProvider>
