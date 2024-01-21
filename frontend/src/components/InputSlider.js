@@ -11,7 +11,7 @@ const Input = styled(MuiInput)`
 `;
 
 export default function InputSlider(props) {
-  const minValue = props.minValue;
+  const [minValue, setMinValue] = useState(props.minValue);
   const [maxValue, setMaxValue] = useState(props.maxValue);
   const id = props.id;
   const step = props.isFloatingPoint ? (maxValue - minValue) / 100 : 1;
@@ -28,12 +28,14 @@ export default function InputSlider(props) {
   };
 
   useEffect(() => {
+    setMinValue(2);
     if (
       props.selectedFFParametersAmount !== 0 &&
       props.selectedFFParametersAmount < maxValue &&
       props.name.toLowerCase() === "dimension"
     ) {
-      setValue(minValue);
+      setMinValue(2);
+      setValue(2);
       setMaxValue(props.selectedFFParametersAmount);
       props.changeParameterValue(id, props.minValue);
     }

@@ -55,17 +55,22 @@ function TestMultipleAlgorithms(props) {
   const [selectedFFObject, setSelectedFFObject] = useState({});
 
   const [dimension, setDimension] = useState(10);
-  const [depth, setDepth] = useState(10);
+  const [depth, setDepth] = useState(3);
   const [satisfiedResult, setSatisfiedResult] = useState(0.1);
   const [selectedAlgorithms, setSelectedAlgorithms] = useState([]);
 
   const [safeMode, setSafeMode] = useState(false);
   const [intervalValue, setIntervalValue] = useState(1000);
 
+  const [isSatisfiedResult, setIsSatisfiedResult] = useState(false);
+
   const handleSafeModeChange = (event) => {
     setSafeMode(event.target.checked);
   };
 
+  const handleSatisfiedChange = (event) => {
+    setIsSatisfiedResult(event.target.checked);
+  };
   const changeIntervalValue = (name, value) => {
     setSafeModeInterval(value);
   };
@@ -360,13 +365,18 @@ function TestMultipleAlgorithms(props) {
                   </Grid>
                 </Grid>
               </Tooltip>
-              <Tooltip title="Amount of iterations" placement="right" arrow>
+
+              <Tooltip
+                title="Amount of values tested for each parameter"
+                placement="right"
+                arrow
+              >
                 <Grid container spacing={2} alignItems="center">
                   <Grid item xs={12}>
                     <InputSlider
                       changeParameterValue={(_id, _value) => setDepth(_value)}
-                      minValue={10}
-                      maxValue={100}
+                      minValue={3}
+                      maxValue={10}
                       name={"Depth"}
                       id={"Depth"}
                       isFloatingPoint={false}
@@ -378,26 +388,37 @@ function TestMultipleAlgorithms(props) {
                 </Grid>
               </Tooltip>
               <Tooltip
-                title="A result that satisfies you"
+                title="Do you want to define the result that satisfies you?"
                 placement="right"
                 arrow
               >
-                <Grid container spacing={2} alignItems="center" marginTop={1}>
-                  <Grid item xs={12}>
-                    <TextField
-                      type="number"
-                      inputProps={{ step: Math.pow(10, -3) }}
-                      label="Satisfying Result"
-                      value={satisfiedResult}
-                      onChange={(e) => {
-                        console.log(e.target.value);
-                        setSatisfiedResult(e.target.value);
-                      }}
-                    />
-                  </Grid>
-                </Grid>
+                <FormControlLabel
+                  control={<Checkbox onChange={handleSatisfiedChange} />}
+                  label="Set a satisfied Result"
+                />
               </Tooltip>
-
+              {isSatisfiedResult ? (
+                <Tooltip
+                  title="A result that satisfies you"
+                  placement="right"
+                  arrow
+                >
+                  <Grid container spacing={2} alignItems="center">
+                    <Grid item xs={12}>
+                      <TextField
+                        type="number"
+                        inputProps={{ step: Math.pow(10, -3) }}
+                        label="Satisfying Result"
+                        value={satisfiedResult}
+                        onChange={(e) => {
+                          console.log(e.target.value);
+                          setSatisfiedResult(e.target.value);
+                        }}
+                      />
+                    </Grid>
+                  </Grid>
+                </Tooltip>
+              ) : null}
               <Tooltip
                 title="Safe mode activates a mechanism, that prevents from loosing data during testing."
                 placement="right"
@@ -436,6 +457,9 @@ function TestMultipleAlgorithms(props) {
     );
   };
   const downloadFile = async () => {
+    console.log(
+      `Reports/PDF/Multiple/${RequestResult.executedAlgorithms[0].multipleTestId}`
+    );
     api
       .get(
         `Reports/PDF/Multiple/${RequestResult.executedAlgorithms[0].multipleTestId}`,
@@ -444,6 +468,7 @@ function TestMultipleAlgorithms(props) {
         }
       )
       .then((response) => {
+        console.log(response);
         const url = window.URL.createObjectURL(
           new Blob([response.data], { type: "application/pdf" })
         );
@@ -492,6 +517,7 @@ function TestMultipleAlgorithms(props) {
       endpoint = "AlgorithmTester/TestMultipleAlgorithmsSafeMode";
       params.interval = safeModeInterval;
     }
+    if (!isSatisfiedResult) params.satisfiedResult = NaN;
 
     console.log(params);
     try {

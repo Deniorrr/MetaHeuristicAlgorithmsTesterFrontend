@@ -161,11 +161,11 @@ function App() {
           />
           <Route
             path="/MetaHeuristicAlgorithmsTesterFrontend/checkSingleStatus"
-            element={<CheckSingle />}
+            element={<CheckSingle addAlert={addAlert} />}
           />
           <Route
             path="/MetaHeuristicAlgorithmsTesterFrontend/checkMultipleStatus"
-            element={<CheckMultiple />}
+            element={<CheckMultiple addAlert={addAlert} />}
           />
         </Routes>
       </Container>

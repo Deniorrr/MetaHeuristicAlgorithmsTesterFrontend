@@ -558,7 +558,7 @@ function TestSingleAlgorithm(props) {
                 textAlign={"center"}
               >
                 Result
-                {RequestResult.fBest ? (
+                {!isNaN(RequestResult.fBest) ? (
                   <Button
                     variant="outlined"
                     onClick={downloadFile}
@@ -574,7 +574,7 @@ function TestSingleAlgorithm(props) {
                 ) : null}
               </Typography>
               <Divider />
-              {RequestResult.fBest ? renderResult() : null}
+              {!isNaN(RequestResult.fBest) ? renderResult() : null}
             </CardContent>
           </Card>
           {/* <Card>

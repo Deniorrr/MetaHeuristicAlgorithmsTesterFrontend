@@ -1,4 +1,4 @@
-GET https://metaheuristicalgorithmstesterapi20240102183449.azurewebsites.net/algorithms
+GET https://metaheuristicalgorithmstesterapi20240102183449.azurewebsites.net/Reports/PDF/Multiple/16/
 Content-Type: application/json
 
 ###
