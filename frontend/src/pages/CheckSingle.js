@@ -14,6 +14,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Tooltip,
 } from "@mui/material";
 
 function CheckSingle(props) {
@@ -94,15 +95,29 @@ function CheckSingle(props) {
 
   const renderAlgorithms = () => {
     const elements = executedAlgorithms.map((ea) => {
+      let xBest = "";
+      ea.xBest.forEach((x, index) => {
+        xBest += `x${index + 1}: ${x} \n`;
+      });
       return (
         <TableRow
           key={ea.id}
           sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
         >
+          <TableCell>{ea.date}</TableCell>
           <TableCell>{ea.testedAlgorithmName}</TableCell>
           <TableCell>{ea.testedFitnessFunctionName}</TableCell>
-          <TableCell>{ea.date}</TableCell>
-          <TableCell>{ea.isFailed ? "true" : "false"}</TableCell>
+          <TableCell>{ea.fBest}</TableCell>
+          <TableCell>
+            <Tooltip
+              title={<pre>{xBest}</pre>}
+              placement="bottom"
+              className="pointer"
+              arrow
+            >
+              {`x1: ${ea.xBest[0]} ...`}
+            </Tooltip>
+          </TableCell>
           <TableCell>
             {ea.isFailed ? (
               <Button
@@ -132,6 +147,7 @@ function CheckSingle(props) {
                 setSelectedDeleteId(ea.id);
                 setOpenDelete(true);
               }}
+              style={{ marginTop: "3px" }}
             >
               Delete
             </Button>
@@ -139,15 +155,62 @@ function CheckSingle(props) {
         </TableRow>
       );
     });
+    // const elements = executedAlgorithms.map((ea) => {
+    //   return (
+    //     <TableRow
+    //       key={ea.id}
+    //       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+    //     >
+    //       <TableCell>{ea.testedAlgorithmName}</TableCell>
+    //       <TableCell>{ea.testedFitnessFunctionName}</TableCell>
+    //       <TableCell>{ea.date}</TableCell>
+    //       <TableCell>{ea.isFailed ? "true" : "false"}</TableCell>
+    //       <TableCell>
+    //         {ea.isFailed ? (
+    //           <Button
+    //             variant="outlined"
+    //             color="secondary"
+    //             onClick={() => {
+    //               sendContinueRequest(ea.id);
+    //             }}
+    //           >
+    //             Continue
+    //           </Button>
+    //         ) : (
+    //           <Button
+    //             variant="outlined"
+    //             onClick={() => {
+    //               setSelectedId(ea.id);
+    //               setOpen(true);
+    //             }}
+    //           >
+    //             Download report
+    //           </Button>
+    //         )}
+    //         <Button
+    //           variant="outlined"
+    //           color="error"
+    //           onClick={() => {
+    //             setSelectedDeleteId(ea.id);
+    //             setOpenDelete(true);
+    //           }}
+    //         >
+    //           Delete
+    //         </Button>
+    //       </TableCell>
+    //     </TableRow>
+    //   );
+    // });
     return (
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
+              <TableCell>Date</TableCell>
               <TableCell>testedAlgorithmName</TableCell>
               <TableCell>testedFitnessFunction</TableCell>
-              <TableCell>date</TableCell>
-              <TableCell>Is failed?</TableCell>
+              <TableCell>fBest</TableCell>
+              <TableCell>xBest</TableCell>
               <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>

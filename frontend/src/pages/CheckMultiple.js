@@ -17,6 +17,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Tooltip,
 } from "@mui/material";
 
 function CheckMultiple(props) {
@@ -115,6 +116,10 @@ function CheckMultiple(props) {
 
   const renderAlgorithms = (e, date, uniqueId) => {
     const elements = e.map((ea) => {
+      let xBest = "";
+      ea.xBest.forEach((x, index) => {
+        xBest += `x${index + 1}: ${x} \n`;
+      });
       return (
         <TableRow
           key={ea.id}
@@ -122,7 +127,17 @@ function CheckMultiple(props) {
         >
           <TableCell>{ea.testedAlgorithmName}</TableCell>
           <TableCell>{ea.testedFitnessFunctionName}</TableCell>
-          <TableCell>{ea.date}</TableCell>
+          <TableCell>{ea.fBest}</TableCell>
+          <TableCell>
+            <Tooltip
+              title={<pre>{xBest}</pre>}
+              placement="bottom"
+              className="pointer"
+              arrow
+            >
+              {`x1: ${ea.xBest[0]} ...`}
+            </Tooltip>
+          </TableCell>
           <TableCell>
             {ea.isFailed && ea.timerFrequency !== null ? (
               <Button
@@ -145,14 +160,11 @@ function CheckMultiple(props) {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell colSpan={4}>
+                <TableCell colSpan={5}>
                   <Paper elevation={3}>
                     <Box padding={2}>
                       <Grid container>
                         <Grid item xs={9}>
-                          <Typography variant="h5" component="div">
-                            <strong>Unique ID:</strong> {uniqueId}
-                          </Typography>
                           <Typography variant="h5" component="div">
                             <strong>Date:</strong> {date}
                           </Typography>
@@ -201,7 +213,8 @@ function CheckMultiple(props) {
               <TableRow>
                 <TableCell>testedAlgorithmName</TableCell>
                 <TableCell>testedFitnessFunction</TableCell>
-                <TableCell>date</TableCell>
+                <TableCell>fBest</TableCell>
+                <TableCell>xBest</TableCell>
                 <TableCell>Action</TableCell>
               </TableRow>
             </TableHead>
